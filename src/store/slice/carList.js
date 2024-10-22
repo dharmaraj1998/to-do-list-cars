@@ -1,35 +1,34 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from '@reduxjs/toolkit';
 
 const carList = createSlice({
-    name : "car",
-    initialState : {
-        cars : [],
-        searchTearm : ""
+  name: 'cars',
+  initialState: {
+    searchTerm: '',
+    data: [],
+  },
+  reducers: {
+    changeSearchTerm(state, action) {
+      state.searchTerm = action.payload;
     },
-    reducers : {
-        searchTearm(state,action){
-             state.searchTearm = action.payload
-        },
-        addCar(state,action){
+    addCar(state, action) {
+      // Assumption:
+      // action.payload === { name: 'ab', cost: 140 }
+      state.data.push({
+        name: action.payload.name,
+        cost: action.payload.cost,
+        id: nanoid(),
+      });
+    },
+    removeCar(state, action) {
+      // Assumption:
+      // action.payload === the id of the car we want to remove
+      const updated = state.data.filter((car) => {
+        return car.id !== action.payload;
+      });
+      state.data = updated;
+    },
+  },
+});
 
-            state.cars.push({
-                name : action.payload.name,
-                cost : action.payload.cost,
-                id : nanoid()
-            })
-
-        },
-        removeCar(state,action){
-            state.cars.filter((cars)=>{
-                return cars.id !== action.payload.id
-            })
-        }
-
-
-    }
-})
-
-export const {addCar,removeCar,searchTearm} = carList.actions
-
-export const CarList = carList.reducer
+export const { changeSearchTerm, addCar, removeCar } = carList.actions;
+export const carsReducer = carList.reducer;
